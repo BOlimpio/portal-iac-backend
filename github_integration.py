@@ -9,12 +9,12 @@ class PortalBackend:
         self.github = Github(github_token)
         self.module_repositories = self.get_module_repositories()
 
-    # Fetch GitHub Repositories with Prefix "portal-"
+    # Fetch GitHub Repositories with Prefix "m-portal-"
     def get_module_repositories(self):
         module_repositories = []
         user = self.github.get_user()
         for repo in user.get_repos():
-            if repo.name.startswith("portal-"):
+            if repo.name.startswith("m-portal-"):
                 module_repositories.append(repo)
         return module_repositories
     
@@ -36,12 +36,13 @@ class PortalBackend:
             config.read_string(data)
             
             if "module-info" in config:
-                module_data["title"] = config.get("module-info", "Titulo")
-                module_data["description"] = config.get("module-info", "Descrição")
-                module_data["status"] = config.get("module-info", "Status")
-                module_data["cloud_provider"] = config.get("module-info", "Cloud Provider")
-                module_data["version"] = config.get("module-info", "Versão")
-                module_data["developers"] = config.get("module-info", "Desenvolvedores").split(";")
+                if config.get("module-info", "Portal", fallback="false").lower() == "true":
+                    module_data["title"] = config.get("module-info", "Titulo")
+                    module_data["description"] = config.get("module-info", "Descrição")
+                    module_data["status"] = config.get("module-info", "Status")
+                    module_data["cloud_provider"] = config.get("module-info", "Cloud Provider")
+                    module_data["version"] = config.get("module-info", "Versão")
+                    module_data["developers"] = config.get("module-info", "Desenvolvedores").split(";")
         except Exception as e:
             print(f"Error reading module data for repo {repo.name}: {e}")
         return module_data
@@ -77,8 +78,8 @@ if __name__ == "__main__":
     backend = PortalBackend(github_token)
     
     module_data_list = backend.get_module_data()
-    print(json.dumps(module_data_list, indent=2))
+    print(json.dumps(module_data_list, indent=2, ensure_ascii=False))
     
     for repo in backend.module_repositories:
-        if backend.has_new_commits(repo):
-            backend.download_how_to_use_files(repo)
+        if backend.has_new_commits(repo, 0):
+            backend.download_how_to_use_files(repo, "/home/bruno/Documents/portal-iac/portal-iac-backend/")
