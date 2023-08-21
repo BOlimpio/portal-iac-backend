@@ -47,19 +47,19 @@ class PortalBackend:
             print(f"Error reading module data for repo {repo.name}: {e}")
         return module_data
     
-    # Check for New Commits
-    def has_new_commits(self, repo, last_commit_count):
-        current_commit_count = repo.get_commits().totalCount
-        return current_commit_count > last_commit_count
+    # # Check for New Commits
+    # def has_new_commits(self, repo, last_commit_count):
+    #     current_commit_count = repo.get_commits().totalCount
+    #     return current_commit_count > last_commit_count
     
     # Downloading files from the "how-to-use" folder
-    def download_how_to_use_files(self, repo, destination_folder):
+    def download_how_to_use_files(self, repo):
         try:
             contents = repo.get_contents("how-to-use")
             for content in contents:
                 if content.type == "file":
                     url = content.download_url
-                    file_name = os.path.join(destination_folder, content.name)
+                    file_name = os.path.join(content.name)
                     response = requests.get(url)
                     if response.status_code == 200:
                         with open(file_name, "wb") as file:
@@ -81,5 +81,4 @@ if __name__ == "__main__":
     print(json.dumps(module_data_list, indent=2, ensure_ascii=False))
     
     for repo in backend.module_repositories:
-        if backend.has_new_commits(repo, 0):
-            backend.download_how_to_use_files(repo, "/home/bruno/Documents/portal-iac/portal-iac-backend/")
+        backend.download_how_to_use_files(repo, "/home/bruno/Documents/portal-iac/portal-iac-backend/")
