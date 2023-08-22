@@ -20,9 +20,6 @@ venv/
 # Crash log files
 crash.log
 
-# Ignore .tf files in the root of your configuration
-*.tf
-
 # Ignore override files as they are usually next to configuration files
 override.tf
 override.tf.json
