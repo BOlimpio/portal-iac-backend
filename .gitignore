@@ -4,6 +4,9 @@ config.ini
 # VS code
 .vscode/
 
+# Python
+venv/
+
 # Local .terraform directories
 **/.terraform/*
 
