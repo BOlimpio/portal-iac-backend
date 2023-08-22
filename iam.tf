@@ -37,23 +37,52 @@ resource "aws_iam_policy_attachment" "cloudfront_policy_attachment" {
   roles      = [aws_iam_role.cloudfront_role.name]
 }
 
-# Para um exemplo de interação entre contas, a seguinte política baseada em recursos 
-#permite que a example função na conta da AWS 444455556666invoque o URL da função associado à função my-function:
-# {
-#     "Version": "2012-10-17",
-#     "Statement": [
-#         {
-#             "Effect": "Allow",
-#             "Principal": {
-#                 "AWS": "arn:aws:iam::444455556666:role/example"
-#             },
-#             "Action": "lambda:InvokeFunctionUrl",
-#             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:my-function",
-#             "Condition": {
-#                 "StringEquals": {
-#                     "lambda:FunctionUrlAuthType": "AWS_IAM"
-#                 }
-#             }
-#         }
-#     ]
-# }
+
+############# Lambda exec role #############
+
+resource "aws_iam_role" "lambda_execution_role" {
+  name = "lambda-execution-role"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+resource "aws_iam_policy" "lambda_s3_policy" {
+  name = "lambda-s3-policy"
+  
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ],
+        Resource = [
+          aws_s3_bucket.lambda_code.arn, 
+          "${aws_s3_bucket.lambda_code.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
+  policy_arn = aws_iam_policy.lambda_s3_policy.arn
+  role       = aws_iam_role.lambda_execution_role.name
+}
+
+resource "aws_iam_policy_attachment" "lambda_exec_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.lambda_execution_role.name
+}

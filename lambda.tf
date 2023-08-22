@@ -1,54 +1,35 @@
 resource "aws_lambda_function" "get_module_repositories" {
-  function_name = "get-module-repositories"
-  handler       = "get_module_repositories.handler"  # Substitua "lambda_handler" pelo nome do método no código Python
-  runtime       = "python3.8"                        # Defina a versão do Python que você está usando
-  filename      = "path/to/your/package.zip"         # Substitua pelo caminho para seu pacote .zip contendo seu código Lambda
-  role          = aws_iam_role.lambda_exec_role.arn
+  function_name = "get_module_data_conf"
+  handler       = "get_module_data_conf.handler"  # Replace "lambda_handler" with method name in Python code
+  runtime       = "python3.8"                        # Set the Python version you are using
+  filename      = "${aws_s3_bucket.lambda_code.bucket}/get-module-data-conf.zip"    # Replace with the path to your .zip package containing your Lambda code
+  role          = aws_iam_role.lambda_execution_role.arn
 
   environment {
     variables = {
-      GITHUB_TOKEN = "your-github-token" # Substitua pelo seu token do GitHub
+      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
     }
   }
+
+  depends_on = [ archive_file.lambda_zip_get_module_conf ]
 }
 
 resource "aws_lambda_function" "download_how_to_use_files" {
   function_name = "download-how-to-use-files"
-  handler       = "download_how_to_use_files.handler"        # Substitua "lambda_handler" pelo nome do método no código Python
-  runtime       = "python3.8"                                # Defina a versão do Python que você está usando
-  filename      = "path/to/your/package.zip"                 # Substitua pelo caminho para seu pacote .zip contendo seu código Lambda
-  role          = aws_iam_role.lambda_exec_role.arn
+  handler       = "download_how_to_use_files.handler"        # Replace "lambda_handler" with method name in Python code
+  runtime       = "python3.8"                                # Set the Python version you are using
+  filename      = "${aws_s3_bucket.lambda_code.bucket}/download-how-to-use.zip"   # Replace with the path to your .zip package containing your Lambda code
+  role          = aws_iam_role.lambda_execution_role.arn
 
   environment {
     variables = {
-      GITHUB_TOKEN = "your-github-token" # Substitua pelo seu token do GitHub
+      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
     }
   }
+
+  depends_on = [ archive_file.lambda_zip_download_how_to_use ]
 }
 
-resource "aws_iam_role" "lambda_exec_role" {
-  name = "lambda-exec-role"
-
-  assume_role_policy = <<EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Action": "sts:AssumeRole",
-        "Effect": "Allow",
-        "Principal": {
-          "Service": "lambda.amazonaws.com"
-        }
-      }
-    ]
-  }
-  EOF
-}
-
-resource "aws_iam_policy_attachment" "lambda_exec_policy" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  role       = aws_iam_role.lambda_exec_role.name
-}
 
 ########### Lambda Permission ###########
 
