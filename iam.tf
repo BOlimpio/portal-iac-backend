@@ -69,8 +69,8 @@ resource "aws_iam_policy" "lambda_s3_policy" {
           "s3:ListBucket"
         ],
         Resource = [
-          aws_s3_bucket.lambda_code.arn, 
-          "${aws_s3_bucket.lambda_code.arn}/*"
+          aws_s3_bucket.lambda_code_github.arn, 
+          "${aws_s3_bucket.lambda_code_github.arn}/*"
         ]
       }
     ]
@@ -82,7 +82,7 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
   role       = aws_iam_role.lambda_execution_role.name
 }
 
-resource "aws_iam_policy_attachment" "lambda_exec_policy" {
+resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.lambda_execution_role.name
 }
