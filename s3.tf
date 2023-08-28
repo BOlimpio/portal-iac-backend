@@ -30,12 +30,6 @@ data "archive_file" "lambda_zip_download_how_to_use" {
   output_path = "${path.module}/download_how_to_use.zip"
 }
 
-data "archive_file" "lambda_zip_lambda_layer" {
-  type        = "zip"
-  source_dir  = "${path.module}/lambda_layer"
-  output_path = "${path.module}/lambda_layer.zip"
-}
-
 ######### Upload ZIP lambda source code #########
 
 resource "aws_s3_object" "upload_get_module_conf_object" {
@@ -54,7 +48,7 @@ resource "aws_s3_object" "upload_download_how_to_use_object" {
 
 resource "aws_s3_object" "upload_lambda_layer_object" {
   bucket       = aws_s3_bucket.lambda_code_github.id
-  key          = "lambda_layer.zip"
-  source       = data.archive_file.lambda_zip_lambda_layer.output_path
+  key          = "python-github-layer.zip"
+  source       = "${path.module}/python-github-layer.zip"
   content_type = "application/zip"
 }

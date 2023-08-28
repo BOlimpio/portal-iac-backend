@@ -1,7 +1,9 @@
+# AWS Lambda filename.method_name as handler format.
+
 resource "aws_lambda_function" "get_module_repositories" {
   function_name = "get_module_data_conf"
-  handler       = "get_module_data_conf.lambda_handler"  # Replace "lambda_handler" with method name in Python code
-  runtime       = "python3.8"                        # Set the Python version you are using
+  handler       = "get_module_data_conf.get_module_data_conf"  # Replace "lambda_handler" with method name in Python code
+  runtime       = "python3.7"                        # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
   s3_key        = "get_module_data_conf.zip"
   //filename      = "${aws_s3_bucket.lambda_code_github.bucket}/get-module-data-conf.zip"    # Replace with the path to your .zip package containing your Lambda code
@@ -14,13 +16,13 @@ resource "aws_lambda_function" "get_module_repositories" {
     }
   }
 
-  # depends_on = [ data.archive_file.lambda_zip_get_module_conf ]
+  depends_on = [ data.archive_file.lambda_zip_get_module_conf ]
 }
 
 resource "aws_lambda_function" "download_how_to_use_files" {
   function_name = "download-how-to-use-files"
-  handler       = "download_how_to_use_files.lambda_handler"        # Replace "lambda_handler" with method name in Python code
-  runtime       = "python3.8"                                # Set the Python version you are using
+  handler       = "download_how_to_use_files.download_how_to_use_files"        # Replace "lambda_handler" with method name in Python code
+  runtime       = "python3.7"                                # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
   s3_key        = "download_how_to_use.zip"  
   //filename      = "${aws_s3_bucket.lambda_code_github.bucket}/download-how-to-use.zip"   # Replace with the path to your .zip package containing your Lambda code
@@ -33,13 +35,13 @@ resource "aws_lambda_function" "download_how_to_use_files" {
     }
   }
 
-  # depends_on = [ data.archive_file.lambda_zip_download_how_to_use ]
+  depends_on = [ data.archive_file.lambda_zip_download_how_to_use ]
 }
 
 resource "aws_lambda_layer_version" "github_lambda_layer" {
   filename = aws_s3_object.upload_lambda_layer_object.source
   layer_name = "lambda_layer"
-  compatible_runtimes = ["python3.8"]
+  compatible_runtimes = ["python3.7"]
 }
 
 
@@ -66,9 +68,27 @@ resource "aws_lambda_layer_version" "github_lambda_layer" {
 resource "aws_lambda_function_url" "get_module_repositories_url" {
   function_name      = aws_lambda_function.get_module_repositories.function_name
   authorization_type = "AWS_IAM"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["*"]
+    allow_headers     = ["date", "keep-alive"]
+    expose_headers    = ["keep-alive", "date"]
+    max_age           = 86400
+  }
 }
 
 resource "aws_lambda_function_url" "download_how_to_use_files_ul" {
   function_name      = aws_lambda_function.download_how_to_use_files.function_name
   authorization_type = "AWS_IAM"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["*"]
+    allow_headers     = ["date", "keep-alive"]
+    expose_headers    = ["keep-alive", "date"]
+    max_age           = 86400
+  }
 }
