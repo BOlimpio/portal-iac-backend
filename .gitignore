@@ -11,6 +11,8 @@ config.ini
 
 .vscode/
 
+.terraform 
+
 # Distribution / packaging
 .Python
 build/

@@ -80,5 +80,6 @@ if __name__ == "__main__":
     module_data_list = backend.get_module_data()
     print(json.dumps(module_data_list, indent=2, ensure_ascii=False))
     
-    # for repo in backend.module_repositories:
-    #     backend.download_how_to_use_files(repo, "/home/bruno/Documents/portal-iac/portal-iac-backend/")
+    for repo in backend.module_repositories:
+        print(repo)
+        backend.download_how_to_use_files(repo)
