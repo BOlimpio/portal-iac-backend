@@ -2,6 +2,9 @@ import os
 import json
 import requests
 from github import Github
+import zipfile
+import io
+import base64
 
 def download_how_to_use_files(event, context):
     github_token = os.environ["GITHUB_TOKEN"]
@@ -21,10 +24,26 @@ def download_how_to_use_files(event, context):
                     with open(file_name, "wb") as file:
                         file.write(response.content)
                     print(f"Downloaded: {content.name}")
+                    
+                    # Zip the downloaded file
+                    zip_buffer = io.BytesIO()
+                    with zipfile.ZipFile(zip_buffer, 'w') as zipf:
+                        zipf.write(file_name, os.path.basename(file_name))
+                    
+                    # Return the zip file as base64-encoded content
+                    zip_content = zip_buffer.getvalue()
+                    return {
+                        "statusCode": 200,
+                        "body": {
+                            "message": "Downloaded how-to-use files",
+                            "file_name": content.name,
+                            "zip_content": base64.b64encode(zip_content).decode('utf-8')
+                        }
+                    }
     except Exception as e:
         print(f"Error downloading files from repo {repo.name}: {e}")
     
     return {
         "statusCode": 200,
-        "body": "Downloaded how-to-use files"
+        "body": "No files downloaded"
     }
