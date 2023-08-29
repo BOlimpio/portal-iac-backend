@@ -1,6 +1,7 @@
 # AWS Lambda filename.method_name as handler format.
 
 resource "aws_lambda_function" "get_module_repositories" {
+  description = "Function that will get the information of all modules that start with prefix 'm-portal-' and have the file 'module-data.conf'"
   function_name = "get_module_data_conf"
   handler       = "get_module_data_conf.get_module_data_conf"  # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                        # Set the Python version you are using
@@ -20,8 +21,9 @@ resource "aws_lambda_function" "get_module_repositories" {
 }
 
 resource "aws_lambda_function" "download_how_to_use_files" {
+  description   = "Function that receives the name of the repository as a parameter and downloads the files in the 'how-to-use' folder"
   function_name = "download-how-to-use-files"
-  handler       = "download_how_to_use_files.download_how_to_use_files"        # Replace "lambda_handler" with method name in Python code
+  handler       = "download_how_to_use.download_how_to_use_files"        # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                                # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
   s3_key        = "download_how_to_use.zip"  
