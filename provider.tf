@@ -12,7 +12,7 @@ provider "aws" {
 
   default_tags {
    tags = {
-     Environment = "Test"
+     Environment = "Dev"
      Owner       = "Bruno Olimpio"
      Project     = "Portal_IaC"
    }
