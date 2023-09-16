@@ -7,7 +7,6 @@ resource "aws_lambda_function" "get_module_repositories" {
   runtime       = "python3.7"                        # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
   s3_key        = "get_module_data_conf.zip"
-  //filename      = "${aws_s3_bucket.lambda_code_github.bucket}/get-module-data-conf.zip"    # Replace with the path to your .zip package containing your Lambda code
   role          = aws_iam_role.lambda_execution_role.arn
   layers = [aws_lambda_layer_version.github_lambda_layer.arn]
 
@@ -22,12 +21,11 @@ resource "aws_lambda_function" "get_module_repositories" {
 
 resource "aws_lambda_function" "download_how_to_use_files" {
   description   = "Function that receives the name of the repository as a parameter and downloads the files in the 'how-to-use' folder"
-  function_name = "download-how-to-use-files"
-  handler       = "download_how_to_use.download_how_to_use_files"        # Replace "lambda_handler" with method name in Python code
+  function_name = "download-how-to-use"
+  handler       = "download_how_to_use.download_how_to_use"        # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                                # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
   s3_key        = "download_how_to_use.zip"  
-  //filename      = "${aws_s3_bucket.lambda_code_github.bucket}/download-how-to-use.zip"   # Replace with the path to your .zip package containing your Lambda code
   role          = aws_iam_role.lambda_execution_role.arn
   layers = [aws_lambda_layer_version.github_lambda_layer.arn]
 

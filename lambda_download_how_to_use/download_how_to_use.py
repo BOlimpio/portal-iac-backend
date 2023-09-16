@@ -6,7 +6,7 @@ import zipfile
 import io
 import base64
 
-def download_how_to_use_files(event, context):
+def download_how_to_use(event, context):
     github_token = os.environ["GITHUB_TOKEN"]
     github = Github(github_token)
     
