@@ -35,6 +35,7 @@ def read_module_data(repo):
                 module_data["cloud_provider"] = config.get("module-info", "Cloud Provider")
                 module_data["version"] = config.get("module-info", "Versão")
                 module_data["developers"] = config.get("module-info", "Desenvolvedores").split(";")
+                module_data["github_link"] = f"https://github.com/{repo.owner.login}/{repo.name}"
     except Exception as e:
         print(f"Error reading module data for repo {repo.name}: {e}")
     return module_data
