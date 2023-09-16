@@ -10,7 +10,7 @@ def download_how_to_use(event, context):
     github_token = os.environ["GITHUB_TOKEN"]
     github = Github(github_token)
     
-    repo_name = event['repo_name']
+    repo_name = event.get['repo_name']
     repo = github.get_repo(repo_name)
     
     try:
