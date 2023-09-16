@@ -10,10 +10,16 @@ def download_how_to_use(event, context):
     github_token = os.environ["GITHUB_TOKEN"]
     github = Github(github_token)
     
-    repo_name = event.get['repo_name']
-    repo = github.get_repo(repo_name)
+    repo_name = event.get('queryStringParameters', {}).get('repo_name')
+    if repo_name is None:
+        return {
+            "statusCode": 400,
+            "body": "O parâmetro 'repo_name' não foi fornecido na solicitação."
+        }
     
     try:
+        repo = github.get_repo(repo_name)
+        zip_file_name = repo_name.split("/")[-1] + "-how-to-use.zip" if repo_name else None
         contents = repo.get_contents("how-to-use")
         for content in contents:
             if content.type == "file":
@@ -35,13 +41,26 @@ def download_how_to_use(event, context):
                     return {
                         "statusCode": 200,
                         "body": {
-                            "message": "Downloaded how-to-use files",
-                            "file_name": content.name,
+                            "message": f"Downloaded '{zip_file_name}' files",
+                            "file_name": zip_file_name,
                             "zip_content": base64.b64encode(zip_content).decode('utf-8')
                         }
                     }
+    except github.UnknownObjectException:
+        return {
+            "statusCode": 404,
+            "body": f"O repositório '{repo_name}' não foi encontrado no GitHub."
+        }
+    except requests.exceptions.RequestException as e:
+        return {
+            "statusCode": 500,
+            "body": f"Erro ao baixar arquivos: {str(e)}"
+        }
     except Exception as e:
-        print(f"Error downloading files from repo {repo.name}: {e}")
+        return {
+            "statusCode": 500,
+            "body": f"Erro inesperado: {str(e)}"
+        }
     
     return {
         "statusCode": 200,
