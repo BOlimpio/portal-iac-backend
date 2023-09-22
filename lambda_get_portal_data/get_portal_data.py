@@ -9,7 +9,7 @@ def get_data_from_folder(event, context):
     # Nome do repositório que contém os dados
     repo_name = "portal-iac-data"
     # Nome da pasta onde os arquivos JSON estão localizados (passado como parâmetro)
-    folder_name = event["queryStringParameters"]["folder_name"]
+    folder_name = event.get('queryStringParameters', {}).get('folder_name')
     
     try:
         # Obtém o conteúdo da pasta do repositório

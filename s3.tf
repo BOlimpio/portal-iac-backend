@@ -30,6 +30,12 @@ data "archive_file" "lambda_zip_download_how_to_use" {
   output_path = "${path.module}/download_how_to_use.zip"
 }
 
+data "archive_file" "lambda_get_portal_data" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_get_portal_data"
+  output_path = "${path.module}/get_portal_data.zip"
+}
+
 ######### Upload ZIP lambda source code #########
 
 resource "aws_s3_object" "upload_get_module_conf_object" {
@@ -43,6 +49,13 @@ resource "aws_s3_object" "upload_download_how_to_use_object" {
   bucket       = aws_s3_bucket.lambda_code_github.id
   key          = "download_how_to_use.zip"
   source       = data.archive_file.lambda_zip_download_how_to_use.output_path
+  content_type = "application/zip"
+}
+
+resource "aws_s3_object" "upload_get_portal_data_object" {
+  bucket       = aws_s3_bucket.lambda_code_github.id
+  key          = "get_portal_data.zip"
+  source       = data.archive_file.lambda_get_portal_data.output_path
   content_type = "application/zip"
 }
 

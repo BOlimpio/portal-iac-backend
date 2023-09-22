@@ -14,6 +14,9 @@ def get_module_data_conf(event, context):
     
     module_data_list = [read_module_data(repo) for repo in module_repositories]
     
+    # Filtra os objetos vazios da lista
+    module_data_list = [module_data for module_data in module_data_list if module_data]
+    
     return {
         "statusCode": 200,
         "body": json.dumps(module_data_list, indent=2, ensure_ascii=False)
@@ -38,4 +41,6 @@ def read_module_data(repo):
                 module_data["github_link"] = f"https://github.com/{repo.owner.login}/{repo.name}"
     except Exception as e:
         print(f"Error reading module data for repo {repo.name}: {e}")
-    return module_data
+    
+    # Retorna o objeto vazio apenas se todos os campos estiverem vazios
+    return module_data if any(module_data.values()) else None
