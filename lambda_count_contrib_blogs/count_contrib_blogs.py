@@ -7,7 +7,7 @@ def count_files_in_folder(event, context):
     github = Github(github_token)
     
     # Nome do repositório que contém os dados
-    repo_name = "portal-iac-data"
+    repo_name = "BOlimpio/portal-iac-data"
     # Nomes das pastas onde os arquivos estão localizados
     folders = ["contributors", "blogs-post"]
     

@@ -16,7 +16,7 @@ resource "aws_lambda_function" "get_module_repositories" {
     }
   }
 
-  depends_on = [ data.archive_file.lambda_zip_get_module_conf ]
+  depends_on = [ aws_s3_object.upload_get_module_conf_object ]
 }
 
 resource "aws_lambda_function" "download_how_to_use_files" {
@@ -35,7 +35,7 @@ resource "aws_lambda_function" "download_how_to_use_files" {
     }
   }
 
-  depends_on = [ data.archive_file.lambda_zip_download_how_to_use ]
+  depends_on = [ aws_s3_object.upload_download_how_to_use_object ]
 }
 
 resource "aws_lambda_function" "get_portal_data" {
@@ -54,7 +54,7 @@ resource "aws_lambda_function" "get_portal_data" {
     }
   }
 
-  depends_on = [ data.archive_file.upload_get_portal_data_object ]
+  depends_on = [ aws_s3_object.upload_get_portal_data_object ]
 }
 
 resource "aws_lambda_function" "count_contrib_blogs" {
@@ -73,12 +73,12 @@ resource "aws_lambda_function" "count_contrib_blogs" {
     }
   }
 
-  depends_on = [ data.archive_file.count_contrib_blogs_object ]
+  depends_on = [ aws_s3_object.count_contrib_blogs_object ]
 }
 
 resource "aws_lambda_function" "get_number_of_modules" {
   description   = "Get the number of contributors and blogs post"
-  function_name = "portal_iac_count_contrib_blogs"
+  function_name = "portal_iac_get_number_of_modules"
   handler       = "get_number_of_modules.get_number_of_modules"        # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                                # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
@@ -92,7 +92,7 @@ resource "aws_lambda_function" "get_number_of_modules" {
     }
   }
 
-  depends_on = [ data.archive_file.get_number_of_modules_object ]
+  depends_on = [ aws_s3_object.get_number_of_modules_object ]
 }
 
 resource "aws_lambda_layer_version" "github_lambda_layer" {

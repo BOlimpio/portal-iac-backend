@@ -22,12 +22,15 @@ def get_number_of_modules(event, context):
         elif module_status == "Done":
             num_modules_done += 1
 
+    # Formata os números de módulos em progresso e prontos no formato desejado
+    result = {
+        "modules_in_progress": num_modules_in_progress,
+        "modules_done": num_modules_done
+    }
+
     return {
         "statusCode": 200,
-        "body": json.dumps({
-            "num_modules_in_progress": num_modules_in_progress,
-            "num_modules_done": num_modules_done
-        })
+        "body": json.dumps(result, indent=2, ensure_ascii=False)
     }
 
 def get_module_status(repo):
