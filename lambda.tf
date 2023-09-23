@@ -2,7 +2,7 @@
 
 resource "aws_lambda_function" "get_module_repositories" {
   description = "Function that will get the information of all modules that start with prefix 'm-portal-' and have the file 'module-data.conf'"
-  function_name = "get_module_data_conf"
+  function_name = "portal_iac_get_module_data_conf"
   handler       = "get_module_data_conf.get_module_data_conf"  # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                        # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
@@ -21,7 +21,7 @@ resource "aws_lambda_function" "get_module_repositories" {
 
 resource "aws_lambda_function" "download_how_to_use_files" {
   description   = "Function that receives the name of the repository as a parameter and downloads the files in the 'how-to-use' folder"
-  function_name = "download-how-to-use"
+  function_name = "portal_iac_download-how-to-use"
   handler       = "download_how_to_use.download_how_to_use"        # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                                # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
@@ -40,7 +40,7 @@ resource "aws_lambda_function" "download_how_to_use_files" {
 
 resource "aws_lambda_function" "get_portal_data" {
   description   = "Function that receives the folder name of the content as a parameter and retrive information about blogs post or contributors"
-  function_name = "get_portal_data"
+  function_name = "portal_iac_get_portal_data"
   handler       = "get_portal_data.get_data_from_folder"        # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                                # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
@@ -54,7 +54,45 @@ resource "aws_lambda_function" "get_portal_data" {
     }
   }
 
-  depends_on = [ data.archive_file.lambda_zip_download_how_to_use ]
+  depends_on = [ data.archive_file.upload_get_portal_data_object ]
+}
+
+resource "aws_lambda_function" "count_contrib_blogs" {
+  description   = "Get the number of contributors and blogs post"
+  function_name = "portal_iac_count_contrib_blogs"
+  handler       = "count_contrib_blogs.count_files_in_folder"        # Replace "lambda_handler" with method name in Python code
+  runtime       = "python3.7"                                # Set the Python version you are using
+  s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
+  s3_key        = "count_contrib_blogs.zip"  
+  role          = aws_iam_role.lambda_execution_role.arn
+  layers = [aws_lambda_layer_version.github_lambda_layer.arn]
+
+  environment {
+    variables = {
+      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
+    }
+  }
+
+  depends_on = [ data.archive_file.count_contrib_blogs_object ]
+}
+
+resource "aws_lambda_function" "get_number_of_modules" {
+  description   = "Get the number of contributors and blogs post"
+  function_name = "portal_iac_count_contrib_blogs"
+  handler       = "get_number_of_modules.get_number_of_modules"        # Replace "lambda_handler" with method name in Python code
+  runtime       = "python3.7"                                # Set the Python version you are using
+  s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
+  s3_key        = "get_number_of_modules.zip"  
+  role          = aws_iam_role.lambda_execution_role.arn
+  layers = [aws_lambda_layer_version.github_lambda_layer.arn]
+
+  environment {
+    variables = {
+      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
+    }
+  }
+
+  depends_on = [ data.archive_file.get_number_of_modules_object ]
 }
 
 resource "aws_lambda_layer_version" "github_lambda_layer" {
@@ -114,6 +152,34 @@ resource "aws_lambda_function_url" "download_how_to_use_files_ul" {
 
 resource "aws_lambda_function_url" "get_portal_data_url" {
   function_name      = aws_lambda_function.get_portal_data.function_name
+  authorization_type = "AWS_IAM"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["*"]
+    allow_headers     = ["date", "keep-alive"]
+    expose_headers    = ["keep-alive", "date"]
+    max_age           = 86400
+  }
+}
+
+resource "aws_lambda_function_url" "count_contrib_blogs_url" {
+  function_name      = aws_lambda_function.count_contrib_blogs.function_name
+  authorization_type = "AWS_IAM"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["*"]
+    allow_headers     = ["date", "keep-alive"]
+    expose_headers    = ["keep-alive", "date"]
+    max_age           = 86400
+  }
+}
+
+resource "aws_lambda_function_url" "get_number_of_modules_url" {
+  function_name      = aws_lambda_function.get_number_of_modules.function_name
   authorization_type = "AWS_IAM"
 
   cors {

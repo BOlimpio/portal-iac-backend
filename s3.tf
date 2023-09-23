@@ -36,6 +36,18 @@ data "archive_file" "lambda_get_portal_data" {
   output_path = "${path.module}/get_portal_data.zip"
 }
 
+data "archive_file" "lambda_get_number_of_modules" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_get_number_of_modules"
+  output_path = "${path.module}/get_number_of_modules.zip"
+}
+
+data "archive_file" "lambda_count_contrib_blogs" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_count_contrib_blogs"
+  output_path = "${path.module}/count_contrib_blogs.zip"
+}
+
 ######### Upload ZIP lambda source code #########
 
 resource "aws_s3_object" "upload_get_module_conf_object" {
@@ -56,6 +68,20 @@ resource "aws_s3_object" "upload_get_portal_data_object" {
   bucket       = aws_s3_bucket.lambda_code_github.id
   key          = "get_portal_data.zip"
   source       = data.archive_file.lambda_get_portal_data.output_path
+  content_type = "application/zip"
+}
+
+resource "aws_s3_object" "count_contrib_blogs_object" {
+  bucket       = aws_s3_bucket.lambda_code_github.id
+  key          = "count_contrib_blogs.zip"
+  source       = data.archive_file.lambda_count_contrib_blogs.output_path
+  content_type = "application/zip"
+}
+
+resource "aws_s3_object" "get_number_of_modules_object" {
+  bucket       = aws_s3_bucket.lambda_code_github.id
+  key          = "get_number_of_modules.zip"
+  source       = data.archive_file.lambda_get_number_of_modules.output_path
   content_type = "application/zip"
 }
 
