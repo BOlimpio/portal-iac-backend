@@ -12,20 +12,31 @@ def get_number_of_modules(event, context):
         if repo.name.startswith("m-portal-"):
             module_repositories.append(repo)
     
-    num_modules_in_progress = 0
-    num_modules_done = 0
+    num_modules_in_progress_aws = 0
+    num_modules_done_aws = 0
+    num_modules_in_progress_azure = 0
+    num_modules_done_azure = 0
 
     for repo in module_repositories:
         module_status = get_module_status(repo)
+        cloud_provider = get_cloud_provider(repo)
         if module_status == "InProgress":
-            num_modules_in_progress += 1
+            if cloud_provider == "AWS":
+                num_modules_in_progress_aws += 1
+            elif cloud_provider == "Azure":
+                num_modules_in_progress_azure += 1
         elif module_status == "Done":
-            num_modules_done += 1
+            if cloud_provider == "AWS":
+                num_modules_done_aws += 1
+            elif cloud_provider == "Azure":
+                num_modules_done_azure += 1
 
-    # Formata os números de módulos em progresso e prontos no formato desejado
+    # Formata os números de módulos em progresso e prontos por provedor de nuvem
     result = {
-        "modules_in_progress": num_modules_in_progress,
-        "modules_done": num_modules_done
+        "modules_in_progress_aws": num_modules_in_progress_aws,
+        "modules_done_aws": num_modules_done_aws,
+        "modules_in_progress_azure": num_modules_in_progress_azure,
+        "modules_done_azure": num_modules_done_azure
     }
 
     return {
@@ -46,3 +57,16 @@ def get_module_status(repo):
     except Exception as e:
         print(f"Error reading module data for repo {repo.name}: {e}")
     return None
+
+def get_cloud_provider(repo):
+    try:
+        content = repo.get_contents("module-data.conf")
+        data = content.decoded_content.decode("utf-8")
+        config = configparser.ConfigParser()
+        config.read_string(data)
+        
+        if "module-info" in config:
+            return config.get("module-info", "Cloud Provider", fallback="Unknown")
+    except Exception as e:
+        print(f"Error reading module data for repo {repo.name}: {e}")
+    return "Unknown"

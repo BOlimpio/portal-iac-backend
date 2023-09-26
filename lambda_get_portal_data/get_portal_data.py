@@ -7,7 +7,7 @@ def get_data_from_folder(event, context):
     github = Github(github_token)
     
     # Nome do repositório que contém os dados
-    repo_name = "portal-iac-data"
+    repo_name = "BOlimpio/portal-iac-data"
     # Nome da pasta onde os arquivos JSON estão localizados (passado como parâmetro)
     folder_name = event.get('queryStringParameters', {}).get('folder_name')
     

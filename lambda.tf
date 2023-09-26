@@ -21,7 +21,7 @@ resource "aws_lambda_function" "get_module_repositories" {
 
 resource "aws_lambda_function" "download_how_to_use_files" {
   description   = "Function that receives the name of the repository as a parameter and downloads the files in the 'how-to-use' folder"
-  function_name = "portal_iac_download-how-to-use"
+  function_name = "portal_iac_download_how_to_use"
   handler       = "download_how_to_use.download_how_to_use"        # Replace "lambda_handler" with method name in Python code
   runtime       = "python3.7"                                # Set the Python version you are using
   s3_bucket     = aws_s3_bucket.lambda_code_github.bucket
