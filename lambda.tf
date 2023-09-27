@@ -104,21 +104,45 @@ resource "aws_lambda_layer_version" "github_lambda_layer" {
 
 ########### Lambda Permission ###########
 
-# resource "aws_lambda_permission" "allow_cloudfront" {
-#   statement_id  = "AllowExecutionFromCloudFront"
-#   action        = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.my_lambda_function.function_name
-#   principal     = "edgelambda.amazonaws.com"
-#   source_arn    = aws_cloudfront_distribution.my_distribution.arn // <------------ ToDO
-# }
+resource "aws_lambda_permission" "allow_cloudfront_get_module_repositories" {
+  statement_id  = "AllowExecutionFromCloudFrontToLambdaGet_module_repositories"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.get_module_repositories.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+}
 
-# resource "aws_lambda_permission" "allow_cloudfront" {
-#   statement_id  = "AllowExecutionFromCloudFront"
-#   action        = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.my_lambda_function.function_name
-#   principal     = "edgelambda.amazonaws.com"
-#   source_arn    = aws_cloudfront_distribution.my_distribution.arn // <------------ ToDO
-# }
+resource "aws_lambda_permission" "allow_cloudfront_download_how_to_use_files" {
+  statement_id  = "AllowExecutionFromCloudFrontToLambda_download_how_to_use_files"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.download_how_to_use_files.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+}
+
+resource "aws_lambda_permission" "allow_cloudfront_get_portal_data" {
+  statement_id  = "AllowExecutionFromCloudFrontToLambda_get_portal_data"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.get_portal_data.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+}
+
+resource "aws_lambda_permission" "allow_cloudfront_count_contrib_blogs" {
+  statement_id  = "AllowExecutionFromCloudFrontToLambda_count_contrib_blogs"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.count_contrib_blogs.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+}
+
+resource "aws_lambda_permission" "allow_cloudfront_get_number_of_modules" {
+  statement_id  = "AllowExecutionFromCloudFrontToLambda_get_number_of_modules"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.get_number_of_modules.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+}
 
 ########### Lambda function URLs ###########
 

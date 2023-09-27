@@ -8,7 +8,13 @@ resource "aws_iam_policy" "lambda_access_policy" {
       {
         Action   = "lambda:InvokeFunction",
         Effect   = "Allow",
-        Resource = "arn:aws:lambda:regiao:conta:function:nome-da-sua-funcao-lambda",
+        Resource = [
+          aws_lambda_function.get_module_repositories.arn,
+          aws_lambda_function.download_how_to_use_files.arn,
+          aws_lambda_function.get_portal_data.arn,
+          aws_lambda_function.count_contrib_blogs.arn,
+          aws_lambda_function.get_number_of_modules.arn 
+          ]
       },
     ],
   })
