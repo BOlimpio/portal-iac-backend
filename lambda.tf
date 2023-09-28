@@ -1,6 +1,6 @@
 # AWS Lambda filename.method_name as handler format.
 
-resource "aws_lambda_function" "get_module_repositories" {
+resource "aws_lambda_function" "get_module_data_conf" {
   description = "Function that will get the information of all modules that start with prefix 'm-portal-' and have the file 'module-data.conf'"
   function_name = "portal_iac_get_module_data_conf"
   handler       = "get_module_data_conf.get_module_data_conf"  # Replace "lambda_handler" with method name in Python code
@@ -19,7 +19,7 @@ resource "aws_lambda_function" "get_module_repositories" {
   depends_on = [ aws_s3_object.upload_get_module_conf_object ]
 }
 
-resource "aws_lambda_function" "download_how_to_use_files" {
+resource "aws_lambda_function" "download_how_to_use" {
   description   = "Function that receives the name of the repository as a parameter and downloads the files in the 'how-to-use' folder"
   function_name = "portal_iac_download_how_to_use"
   handler       = "download_how_to_use.download_how_to_use"        # Replace "lambda_handler" with method name in Python code
@@ -104,114 +104,42 @@ resource "aws_lambda_layer_version" "github_lambda_layer" {
 
 ########### Lambda Permission ###########
 
-resource "aws_lambda_permission" "allow_cloudfront_get_module_repositories" {
-  statement_id  = "AllowExecutionFromCloudFrontToLambdaGet_module_repositories"
+resource "aws_lambda_permission" "api_gtw_permission_get_module_data_conf" {
+  statement_id  = "AllowAPIGatewayInvoke_get_module_data_conf"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.get_module_repositories.function_name
-  principal     = "cloudfront.amazonaws.com"
-  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+  function_name = aws_lambda_function.get_module_data_conf.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.portal_iac.execution_arn}/*"
 }
 
-resource "aws_lambda_permission" "allow_cloudfront_download_how_to_use_files" {
-  statement_id  = "AllowExecutionFromCloudFrontToLambda_download_how_to_use_files"
+resource "aws_lambda_permission" "api_gtw_permission_download_how_to_use" {
+  statement_id  = "AllowAPIGatewayInvoke_download_how_to_use"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.download_how_to_use_files.function_name
-  principal     = "cloudfront.amazonaws.com"
-  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+  function_name = aws_lambda_function.download_how_to_use.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.portal_iac.execution_arn}/*"
 }
 
-resource "aws_lambda_permission" "allow_cloudfront_get_portal_data" {
-  statement_id  = "AllowExecutionFromCloudFrontToLambda_get_portal_data"
+resource "aws_lambda_permission" "api_gtw_permission_get_portal_data" {
+  statement_id  = "AllowAPIGatewayInvoke_get_portal_data"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.get_portal_data.function_name
-  principal     = "cloudfront.amazonaws.com"
-  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.portal_iac.execution_arn}/*"
 }
 
-resource "aws_lambda_permission" "allow_cloudfront_count_contrib_blogs" {
-  statement_id  = "AllowExecutionFromCloudFrontToLambda_count_contrib_blogs"
+resource "aws_lambda_permission" "api_gtw_permission_count_contrib_blogs" {
+  statement_id  = "AllowAPIGatewayInvoke_count_contrib_blogs"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.count_contrib_blogs.function_name
-  principal     = "cloudfront.amazonaws.com"
-  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.portal_iac.execution_arn}/*"
 }
 
-resource "aws_lambda_permission" "allow_cloudfront_get_number_of_modules" {
-  statement_id  = "AllowExecutionFromCloudFrontToLambda_get_number_of_modules"
+resource "aws_lambda_permission" "api_gtw_permission_get_number_of_modules" {
+  statement_id  = "AllowAPIGatewayInvoke_get_number_of_modules"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.get_number_of_modules.function_name
-  principal     = "cloudfront.amazonaws.com"
-  source_arn    = aws_cloudfront_distribution.portal_iac_s3_distribution.arn 
-}
-
-########### Lambda function URLs ###########
-
-resource "aws_lambda_function_url" "get_module_repositories_url" {
-  function_name      = aws_lambda_function.get_module_repositories.function_name
-  authorization_type = "AWS_IAM"
-
-  cors {
-    allow_credentials = true
-    allow_origins     = ["*"]
-    allow_methods     = ["*"]
-    allow_headers     = ["date", "keep-alive"]
-    expose_headers    = ["keep-alive", "date"]
-    max_age           = 86400
-  }
-}
-
-resource "aws_lambda_function_url" "download_how_to_use_files_ul" {
-  function_name      = aws_lambda_function.download_how_to_use_files.function_name
-  authorization_type = "AWS_IAM"
-
-  cors {
-    allow_credentials = true
-    allow_origins     = ["*"]
-    allow_methods     = ["*"]
-    allow_headers     = ["date", "keep-alive"]
-    expose_headers    = ["keep-alive", "date"]
-    max_age           = 86400
-  }
-}
-
-resource "aws_lambda_function_url" "get_portal_data_url" {
-  function_name      = aws_lambda_function.get_portal_data.function_name
-  authorization_type = "AWS_IAM"
-
-  cors {
-    allow_credentials = true
-    allow_origins     = ["*"]
-    allow_methods     = ["*"]
-    allow_headers     = ["date", "keep-alive"]
-    expose_headers    = ["keep-alive", "date"]
-    max_age           = 86400
-  }
-}
-
-resource "aws_lambda_function_url" "count_contrib_blogs_url" {
-  function_name      = aws_lambda_function.count_contrib_blogs.function_name
-  authorization_type = "AWS_IAM"
-
-  cors {
-    allow_credentials = true
-    allow_origins     = ["*"]
-    allow_methods     = ["*"]
-    allow_headers     = ["date", "keep-alive"]
-    expose_headers    = ["keep-alive", "date"]
-    max_age           = 86400
-  }
-}
-
-resource "aws_lambda_function_url" "get_number_of_modules_url" {
-  function_name      = aws_lambda_function.get_number_of_modules.function_name
-  authorization_type = "AWS_IAM"
-
-  cors {
-    allow_credentials = true
-    allow_origins     = ["*"]
-    allow_methods     = ["*"]
-    allow_headers     = ["date", "keep-alive"]
-    expose_headers    = ["keep-alive", "date"]
-    max_age           = 86400
-  }
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.portal_iac.execution_arn}/*"
 }
