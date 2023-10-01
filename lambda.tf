@@ -12,7 +12,7 @@ resource "aws_lambda_function" "get_module_data_conf" {
 
   environment {
     variables = {
-      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
+      GITHUB_TOKEN = var.github_token # Replace with your GitHub token
     }
   }
 
@@ -31,7 +31,7 @@ resource "aws_lambda_function" "download_how_to_use" {
 
   environment {
     variables = {
-      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
+      GITHUB_TOKEN = var.github_token # Replace with your GitHub token
     }
   }
 
@@ -50,7 +50,7 @@ resource "aws_lambda_function" "get_portal_data" {
 
   environment {
     variables = {
-      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
+      GITHUB_TOKEN = var.github_token # Replace with your GitHub token
     }
   }
 
@@ -69,7 +69,7 @@ resource "aws_lambda_function" "count_contrib_blogs" {
 
   environment {
     variables = {
-      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
+      GITHUB_TOKEN = var.github_token # Replace with your GitHub token
     }
   }
 
@@ -88,7 +88,7 @@ resource "aws_lambda_function" "get_number_of_modules" {
 
   environment {
     variables = {
-      GITHUB_TOKEN = "your-github-token" # Replace with your GitHub token
+      GITHUB_TOKEN = var.github_token # Replace with your GitHub token
     }
   }
 
