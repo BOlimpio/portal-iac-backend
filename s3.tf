@@ -144,3 +144,8 @@ resource "aws_s3_bucket_acl" "frontend_public_acl_config" {
   bucket = aws_s3_bucket.frontend_bucket.id
   acl    = "public-read"
 }
+
+resource "aws_s3_bucket_policy" "allow_cf_access_frontend_s3" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+  policy = data.aws_iam_policy_document.s3_frontend_policy_document.json
+}

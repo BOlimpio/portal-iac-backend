@@ -45,3 +45,31 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.lambda_execution_role.name
 }
+
+
+
+
+
+############# S3 frontend bucket policy #############
+
+data "aws_iam_policy_document" "s3_frontend_policy_document" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    actions   = ["s3:GetObject"]
+    effect    = "Allow"
+    resources = [
+      aws_s3_bucket.frontend_bucket.arn,
+      "${aws_s3_bucket.frontend_bucket.arn}/*",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudfront_distribution.portal_iac_s3_distribution.arn]
+    }
+  }
+}
