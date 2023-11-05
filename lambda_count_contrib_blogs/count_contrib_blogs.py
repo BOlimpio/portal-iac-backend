@@ -9,7 +9,7 @@ def count_files_in_folder(event, context):
     # Nome do repositório que contém os dados
     repo_name = "BOlimpio/portal-iac-data"
     # Nomes das pastas onde os arquivos estão localizados
-    folders = ["contributors", "blogs-post"]
+    folders = ["contributors", "blogsPost"]
     
     try:
         # Inicializa um dicionário para armazenar o número de arquivos em cada pasta
