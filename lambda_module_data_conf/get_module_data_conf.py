@@ -35,7 +35,7 @@ def read_module_data(repo):
                 module_data["title"] = config.get("module-info", "Titulo")
                 module_data["description"] = config.get("module-info", "Descrição")
                 module_data["status"] = config.get("module-info", "Status")
-                module_data["cloud_provider"] = config.get("module-info", "Cloud Provider")
+                module_data["cloudProvider"] = config.get("module-info", "Cloud Provider")
                 module_data["version"] = config.get("module-info", "Versão")
                 module_data["developers"] = config.get("module-info", "Desenvolvedores").split(";")
                 module_data["github_link"] = f"https://github.com/{repo.owner.login}/{repo.name}"
